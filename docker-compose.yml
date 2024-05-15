@@ -12,12 +12,19 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
 
   web:
     container_name: web
     build:
       context: .
-    command: bash -c "poetry install --no-root && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "poetry install --no-root && daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     volumes:
       - .:/usr/src/app
     ports:

@@ -16,3 +16,5 @@ RUN pip install --no-cache-dir poetry \
 # Copy the project code into the container
 COPY . .
 
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]
+
