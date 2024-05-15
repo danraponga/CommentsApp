@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}Comments{% endblock %}
+
+{% block content %}
+<h1 class="mt-5">Comments</h1>
+<button class="btn btn-primary mb-4" onclick="openCommentModal()">Add Comment</button>
+
+<!-- Filter Form -->
+<form id="filterForm" class="form-inline mb-4">
+    <input type="text" class="form-control mb-2 mr-sm-2" id="filterUsername" placeholder="Username">
+    <input type="email" class="form-control mb-2 mr-sm-2" id="filterEmail" placeholder="Email">
+    <select class="form-control mb-2 mr-sm-2" id="sortOrder">
+        <option value="desc">Newest First</option>
+        <option value="asc">Oldest First</option>
+    </select>
+    <button type="button" class="btn btn-secondary mb-2" onclick="applyFilters()">Filter</button>
+</form>
+
+<!-- Comment Form Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="commentForm" enctype="multipart/form-data">
+                    <input type="hidden" id="parent_id" value="">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="url" class="form-control" id="homepage" placeholder="Homepage">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="text" placeholder="Comment" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Upload Image</label>
+                        <input type="file" class="form-control-file" id="image" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="file">Upload File</label>
+                        <input type="file" class="form-control-file" id="file" accept=".txt">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="comments" class="mt-4">
+    {% for comment in comments %}
+        <div class="comment-box">
+            <div class="info">
+                <strong>{{ comment.username }}</strong> (<a href="mailto:{{ comment.email }}">{{ comment.email }}</a>)
+                <small class="text-muted">{{ comment.created_at|date:"M d, Y, g:i a" }}</small>
+            </div>
+            <div class="content">{{ comment.text }}</div>
+            {% if comment.image %}
+                <div class="image mt-2">
+                    <img src="{{ comment.image.url }}" alt="Image" class="img-fluid">
+                </div>
+            {% endif %}
+            {% if comment.file %}
+                <div class="file mt-2">
+                    <a href="{{ comment.file.url }}" download>{{ comment.file.name }}</a>
+                </div>
+            {% endif %}
+            <div class="actions">
+                <button onclick="openReplyModal('{{ comment.id }}')">Reply</button>
+                {% if comment.children.all %}
+                    <button onclick="toggleReplies('{{ comment.id }}')">Show Replies</button>
+                {% endif %}
+            </div>
+            <div id="replies-{{ comment.id }}" class="replies" style="display: none;">
+                {% for reply in comment.children.all %}
+                    <div class="comment-box">
+                        <div class="info">
+                            <strong>{{ reply.username }}</strong> (<a href="mailto:{{ reply.email }}">{{ reply.email }}</a>)
+                            <small class="text-muted">{{ reply.created_at|date:"M d, Y, g:i a" }}</small>
+                        </div>
+                        <div class="content">{{ reply.text }}</div>
+                        {% if reply.image %}
+                            <div class="image mt-2">
+                                <img src="{{ reply.image.url }}" alt="Image" class="img-fluid">
+                            </div>
+                        {% endif %}
+                        {% if reply.file %}
+                            <div class="file mt-2">
+                                <a href="{{ reply.file.url }}" download>{{ reply.file.name }}</a>
+                            </div>
+                        {% endif %}
+                        <div class="actions">
+                            <button onclick="openReplyModal('{{ reply.id }}')">Reply</button>
+                        </div>
+                        <div id="replies-{{ reply.id }}" class="replies">
+                            {% for sub_reply in reply.children.all %}
+                                <div class="comment-box">
+                                    <div class="info">
+                                        <strong>{{ sub_reply.username }}</strong> (<a href="mailto:{{ sub_reply.email }}">{{ sub_reply.email }}</a>)
+                                        <small class="text-muted">{{ sub_reply.created_at|date:"M d, Y, g:i a" }}</small>
+                                    </div>
+                                    <div class="content">{{ sub_reply.text }}</div>
+                                    {% if sub_reply.image %}
+                                        <div class="image mt-2">
+                                            <img src="{{ sub_reply.image.url }}" alt="Image" class="img-fluid">
+                                        </div>
+                                    {% endif %}
+                                    {% if sub_reply.file %}
+                                        <div class="file mt-2">
+                                            <a href="{{ sub_reply.file.url }}" download>{{ sub_reply.file.name }}</a>
+                                        </div>
+                                    {% endif %}
+                                    <div class="actions">
+                                        <button onclick="openReplyModal('{{ sub_reply.id }}')">Reply</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="mt-4">
+    {% if is_paginated %}
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <a class="page-link" href="#">{{ num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

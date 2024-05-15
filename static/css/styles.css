@@ -1,0 +1,48 @@
+body {
+    background-color: #f8f9fa;
+}
+.comment-box {
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+.comment-box .info {
+    font-size: 14px;
+    color: #666;
+}
+.comment-box .info a {
+    color: #007bff;
+    text-decoration: none;
+}
+.comment-box .info a:hover {
+    text-decoration: underline;
+}
+.comment-box .content {
+    margin-top: 10px;
+    font-size: 16px;
+}
+.comment-box .actions {
+    margin-top: 10px;
+}
+.comment-box .actions button {
+    font-size: 14px;
+    color: #007bff;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.comment-box .actions button:hover {
+    text-decoration: underline;
+}
+.replies {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+.modal-header, .modal-body {
+    background-color: #f8f9fa;
+}
+.modal-content {
+    border-radius: 8px;
+}
