@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "comments-app"
+version = "0.1.0"
+description = "A Django-powered SPA for posting and managing comments"
+authors = ["danraponga <danrapongha@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.11, <3.13"
+Django = "^4.2.13"
+python-dotenv = "^1.0.1"
+black = "^24.4.2"
+psycopg2-binary = "^2.9.9"
+pillow = "^10.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
