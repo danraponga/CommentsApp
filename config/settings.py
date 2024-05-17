@@ -26,6 +26,12 @@ MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
 IMAGES_DIR = os.getenv('IMAGES_DIR', MEDIA_ROOT / "images")
 FILES_DIR = os.getenv('FILES_DIR', MEDIA_ROOT / "files")
 
+VALID_IMAGE_EXTENSIONS = ("jpg", "png", "gif")
+VALID_FILE_EXTENSIONS = ("txt", "plain")
+
+MAX_IMAGE_SIZE = (320, 240) # (width, height)
+MAX_FILE_SIZE = 100 * 1024  # 100KB
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
