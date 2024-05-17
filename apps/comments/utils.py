@@ -18,13 +18,14 @@ def resize_image_if_needed(base_str, max_size: tuple[int, int]) -> str:
     image_data = decode_base64(base_str)
     image = Image.open(BytesIO(image_data["content"]))
 
-    if (image.height, image.width) <= max_size:
+    if image.size <= max_size:
         image.close()
         return base_str
 
-    image.thumbnail(max_size)
+    resized_image = image.resize(max_size)
     buffer = BytesIO()
-    image.save(buffer, format=image.format)
+    resized_image.save(buffer, format=image.format)
+    resized_image.close()
 
     base_content = b64encode(buffer.getvalue()).decode("utf-8")
     return f"data:image/{image_data['extension']};base64,{base_content}"

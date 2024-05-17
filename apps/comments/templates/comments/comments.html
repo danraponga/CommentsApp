@@ -76,14 +76,14 @@
                 </div>
             {% endif %}
             <div class="actions">
-                <button onclick="openCommentModal('{{ comment.id }}')">Reply</button>
+                <button class="btn btn-primary" onclick="openCommentModal('{{ comment.id }}')">Reply</button>
                 {% if comment.children.all %}
-                    <button onclick="toggleReplies('{{ comment.id }}')">Show Replies</button>
+                    <button class="btn btn-secondary" onclick="toggleReplies(this, '{{ comment.id }}')">Show Replies</button>
                 {% endif %}
             </div>
             <div id="replies-{{ comment.id }}" class="replies" style="display: none;">
                 {% for reply in comment.children.all %}
-                    <div class="comment-box">
+                    <div class="comment-box reply-box">
                         <div class="info">
                             <strong>{{ reply.username }}</strong> (<a href="mailto:{{ reply.email }}">{{ reply.email }}</a>)
                             <small class="text-muted">{{ reply.created_at|date:"M d, Y, g:i a" }}</small>
@@ -100,11 +100,11 @@
                             </div>
                         {% endif %}
                         <div class="actions">
-                            <button onclick="openCommentModal('{{ reply.id }}')">Reply</button>
+                            <button class="btn btn-link" onclick="openCommentModal('{{ reply.id }}')">Reply</button>
                         </div>
                         <div id="replies-{{ reply.id }}" class="replies">
                             {% for sub_reply in reply.children.all %}
-                                <div class="comment-box">
+                                <div class="comment-box reply-box">
                                     <div class="info">
                                         <strong>{{ sub_reply.username }}</strong> (<a href="mailto:{{ sub_reply.email }}">{{ sub_reply.email }}</a>)
                                         <small class="text-muted">{{ sub_reply.created_at|date:"M d, Y, g:i a" }}</small>
@@ -121,7 +121,7 @@
                                         </div>
                                     {% endif %}
                                     <div class="actions">
-                                        <button onclick="openCommentModal('{{ sub_reply.id }}')">Reply</button>
+                                        <button class="btn btn-link" onclick="openCommentModal('{{ sub_reply.id }}')">Reply</button>
                                     </div>
                                 </div>
                             {% endfor %}

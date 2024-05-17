@@ -1,48 +1,85 @@
-body {
-    background-color: #f8f9fa;
-}
 .comment-box {
-    background-color: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
+
 .comment-box .info {
-    font-size: 14px;
-    color: #666;
+    margin-bottom: 10px;
+    font-size: 1.2em;
 }
-.comment-box .info a {
-    color: #007bff;
-    text-decoration: none;
-}
-.comment-box .info a:hover {
-    text-decoration: underline;
-}
+
 .comment-box .content {
-    margin-top: 10px;
-    font-size: 16px;
+    font-size: 1.2em;
+    line-height: 1.5;
 }
+
+.comment-box .image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.comment-box .file a {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: underline;
+    font-size: 1.2em;
+}
+
 .comment-box .actions {
     margin-top: 10px;
 }
+
 .comment-box .actions button {
-    font-size: 14px;
-    color: #007bff;
-    background: none;
+    margin-right: 5px;
+    padding: 5px 15px;
+    font-size: 1.2em;
+    background-color: #007bff;
+    color: white;
     border: none;
+    border-radius: 5px;
+    text-decoration: none;
     cursor: pointer;
 }
+
+.comment-box .actions button.btn-secondary {
+    background-color: #6c757d;
+}
+
 .comment-box .actions button:hover {
-    text-decoration: underline;
+    background-color: #0056b3;
 }
-.replies {
-    margin-left: 20px;
-    margin-top: 10px;
+
+.comment-box .actions button.btn-secondary:hover {
+    background-color: #5a6268;
 }
-.modal-header, .modal-body {
-    background-color: #f8f9fa;
+
+.reply-box {
+    margin-left: 30px;
+    border-left: 3px solid #007bff;
+    padding-left: 10px;
 }
-.modal-content {
-    border-radius: 8px;
+
+/* Styles for Tingle modal */
+.tingle-modal-box {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.tingle-modal-box .tingle-modal-close {
+    color: white;
+    font-size: 2rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }

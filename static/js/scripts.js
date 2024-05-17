@@ -33,10 +33,11 @@ function displayComment(comment) {
             <small class="text-muted">${new Date(comment.created_at).toLocaleString()}</small>
         </div>
         <div class="content">${comment.text}</div>
-        ${comment.image ? `<div class="image mt-2"><img src="${comment.image}" alt="Image" class="img-fluid"></div>` : ''}
+        ${comment.image ? `<div class="image mt-2"><a href="${comment.image}" data-lightbox="comment-${comment.id}"><img src="${comment.image}" alt="Image" class="img-fluid"></a></div>` : ''}
         ${comment.file ? `<div class="file mt-2"><a href="${comment.file}" download>Download File</a></div>` : ''}
         <div class="actions">
-            <button onclick="openCommentModal('${comment.id}')">Reply</button>
+            <button class="btn btn-primary" onclick="openCommentModal('${comment.id}')">Reply</button>
+            <button class="btn btn-secondary" onclick="toggleReplies(this, '${comment.id}')">Show Replies</button>
             <div id="replies-${comment.id}" class="replies"></div>
         </div>
     `;
@@ -44,7 +45,6 @@ function displayComment(comment) {
         const parentDiv = document.getElementById('replies-' + comment.parent);
         if (parentDiv) {
             parentDiv.prepend(commentDiv);
-            // Automatically show replies for the parent comment
             showReplies(comment.parent);
             let showRepliesButton = document.querySelector(`[onclick="toggleReplies('${comment.parent}')"]`);
             if (!showRepliesButton && comment.parent) {
@@ -63,12 +63,14 @@ function displayComment(comment) {
     }
 }
 
-function toggleReplies(commentId) {
+function toggleReplies(button, commentId) {
     const repliesDiv = document.getElementById('replies-' + commentId);
     if (repliesDiv.style.display === 'none' || !repliesDiv.style.display) {
         repliesDiv.style.display = 'block';
+        button.textContent = 'Hide Replies';
     } else {
         repliesDiv.style.display = 'none';
+        button.textContent = 'Show Replies';
     }
 }
 
