@@ -1,16 +1,18 @@
 const ws = new WebSocket('ws://' + window.location.host + '/ws/comments/');
 
 ws.onmessage = function(event) {
-    console.log("Received WebSocket message");
     const data = JSON.parse(event.data);
-    console.log("Parsed data: ", data);
-    const comment = data.comment;
-    displayComment(comment);
+    if (data.errors) {
+        displayErrors(data.errors);
+    } else if (data.comment) {
+        displayComment(data.comment);
+        document.getElementById('commentForm').reset();
+        closeCommentModal();
+    }
 };
 
 commentForm.onsubmit = function(event) {
     event.preventDefault();
-    console.log("Form submitted");
 
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
@@ -25,7 +27,7 @@ commentForm.onsubmit = function(event) {
         email: email,
         homepage: homepage,
         text: text,
-        parent_id: parent_id || null
+        parent_id: parseInt(parent_id) || null
     };
 
     if (imageInput.files.length > 0) {
@@ -54,11 +56,8 @@ commentForm.onsubmit = function(event) {
     } else {
         sendWebSocketMessage(message);
     }
-
-    $('#commentModal').modal('hide');
 };
 
 function sendWebSocketMessage(message) {
-    console.log("Sending message: ", message);
     ws.send(JSON.stringify(message));
 }

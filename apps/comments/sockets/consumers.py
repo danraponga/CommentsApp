@@ -1,14 +1,12 @@
 import json
-import os
+from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 
-from config.settings import FILES_DIR, IMAGES_DIR
+from apps.comments.utils import save_base64file
+from config.settings import FILES_DIR, IMAGES_DIR, MEDIA_ROOT
 from apps.comments.models import Comment
 from apps.comments.serializer import CommentSerializer
-from asgiref.sync import sync_to_async
-from base64 import b64decode
+from apps.comments.forms import CommentForm
 
 
 class CommentConsumer(AsyncWebsocketConsumer):
@@ -20,44 +18,39 @@ class CommentConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("comments", self.channel_name)
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        image_data = data.get("image", None)
-        file_data = data.get("file", None)
+        form = CommentForm(json.loads(text_data))
+        if not await sync_to_async(form.is_valid)():
+            errors = json.loads(form.errors.as_json())
+            print(errors, type(errors))
+            await self.send(text_data=json.dumps({"errors": errors}))
+            return
 
-        image = None
-        if image_data:
-            imgformat, imgstr = image_data.split(";base64,")
-            ext = imgformat.split("/")[-1]
-            image = ContentFile(
-                b64decode(imgstr), name=f'image_{data["username"]}.{ext}'
-            )
-            image = await sync_to_async(default_storage.save)(
-                IMAGES_DIR / image.name, image
-            )
+        data = form.cleaned_data
+        image = data.get("image", None)
+        file = data.get("file", None)
 
-        file = None
-        if file_data:
-            fileformat, filestr = file_data.split(";base64,")
-            ext = fileformat.split("/")[-1]
-            file = ContentFile(
-                b64decode(filestr), name=f'file_{data["username"]}.{ext}'
+        if image:
+            image = save_base64file(
+                path=IMAGES_DIR, base_str=image, username=data["username"]
             )
-            file = await sync_to_async(default_storage.save)(
-                FILES_DIR / file.name, file
+            print(image)
+
+        if file:
+            file = save_base64file(
+                path=FILES_DIR, base_str=file, username=data["username"]
             )
 
         comment = await sync_to_async(Comment.objects.create)(
             username=data["username"],
             email=data["email"],
-            homepage=data.get("homepage", ""),
+            homepage=data.get("homepage", None),
             text=data["text"],
-            parent_id=data.get("parent_id"),
+            parent_id=data.get("parent_id", None),
             image=image,
             file=file,
         )
 
         comment_data = CommentSerializer(comment).data
-
         await self.channel_layer.group_send(
             "comments", {"type": "comment_message", "comment": comment_data}
         )

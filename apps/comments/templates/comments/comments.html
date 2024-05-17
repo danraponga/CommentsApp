@@ -76,7 +76,7 @@
                 </div>
             {% endif %}
             <div class="actions">
-                <button onclick="openReplyModal('{{ comment.id }}')">Reply</button>
+                <button onclick="openCommentModal('{{ comment.id }}')">Reply</button>
                 {% if comment.children.all %}
                     <button onclick="toggleReplies('{{ comment.id }}')">Show Replies</button>
                 {% endif %}
@@ -100,7 +100,7 @@
                             </div>
                         {% endif %}
                         <div class="actions">
-                            <button onclick="openReplyModal('{{ reply.id }}')">Reply</button>
+                            <button onclick="openCommentModal('{{ reply.id }}')">Reply</button>
                         </div>
                         <div id="replies-{{ reply.id }}" class="replies">
                             {% for sub_reply in reply.children.all %}
@@ -121,7 +121,7 @@
                                         </div>
                                     {% endif %}
                                     <div class="actions">
-                                        <button onclick="openReplyModal('{{ sub_reply.id }}')">Reply</button>
+                                        <button onclick="openCommentModal('{{ sub_reply.id }}')">Reply</button>
                                     </div>
                                 </div>
                             {% endfor %}

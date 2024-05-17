@@ -2,8 +2,29 @@ const commentForm = document.getElementById('commentForm');
 const commentsDiv = document.getElementById('comments');
 const filterForm = document.getElementById('filterForm');
 
+function displayErrors(errors) {
+    const previousErrorDiv = document.querySelector('.alert-danger');
+    if (previousErrorDiv) {
+        previousErrorDiv.remove();
+    }
+
+    let errorMessages = '';
+    for (const field in errors) {
+        if (errors.hasOwnProperty(field)) {
+            const messagesArray = errors[field];
+            messagesArray.forEach(messageObj => {
+                errorMessages += `<p>${field}: ${messageObj.message}</p>`;
+            });
+        }
+    }
+
+    const errorDiv = document.createElement('div');
+    errorDiv.classList.add('alert', 'alert-danger');
+    errorDiv.innerHTML = errorMessages;
+    document.querySelector('.modal-body').prepend(errorDiv);
+}
+
 function displayComment(comment) {
-    console.log("Displaying comment: ", comment);
     const commentDiv = document.createElement('div');
     commentDiv.classList.add('comment-box');
     commentDiv.innerHTML = `
@@ -15,24 +36,27 @@ function displayComment(comment) {
         ${comment.image ? `<div class="image mt-2"><img src="${comment.image}" alt="Image" class="img-fluid"></div>` : ''}
         ${comment.file ? `<div class="file mt-2"><a href="${comment.file}" download>Download File</a></div>` : ''}
         <div class="actions">
-            <button onclick="openReplyModal('${comment.id}')">Reply</button>
+            <button onclick="openCommentModal('${comment.id}')">Reply</button>
             <div id="replies-${comment.id}" class="replies"></div>
         </div>
     `;
     if (comment.parent) {
         const parentDiv = document.getElementById('replies-' + comment.parent);
-        parentDiv.prepend(commentDiv);
-        // Automatically show replies for the parent comment
-        showReplies(comment.parent);
-        let showRepliesButton = document.querySelector(`[onclick="toggleReplies('${comment.parent}')"]`);
-        if (!showRepliesButton && comment.parent) {
-            const parentCommentDiv = parentDiv.closest('.comment-box');
-            showRepliesButton = document.createElement('button');
-            showRepliesButton.className = 'btn btn-link';
-            showRepliesButton.setAttribute('onclick', `toggleReplies('${comment.parent}')`);
-            showRepliesButton.textContent = 'Show Replies';
-            parentCommentDiv.querySelector('.actions').appendChild(showRepliesButton);
-            console.log("Added 'Show Replies' button to parent comment");
+        if (parentDiv) {
+            parentDiv.prepend(commentDiv);
+            // Automatically show replies for the parent comment
+            showReplies(comment.parent);
+            let showRepliesButton = document.querySelector(`[onclick="toggleReplies('${comment.parent}')"]`);
+            if (!showRepliesButton && comment.parent) {
+                const parentCommentDiv = parentDiv.closest('.comment-box');
+                showRepliesButton = document.createElement('button');
+                showRepliesButton.className = 'btn btn-link';
+                showRepliesButton.setAttribute('onclick', `toggleReplies('${comment.parent}')`);
+                showRepliesButton.textContent = 'Show Replies';
+                parentCommentDiv.querySelector('.actions').appendChild(showRepliesButton);
+            }
+        } else {
+            commentsDiv.prepend(commentDiv);
         }
     } else {
         commentsDiv.prepend(commentDiv);
@@ -53,15 +77,12 @@ function showReplies(commentId) {
     repliesDiv.style.display = 'block';
 }
 
-function openCommentModal() {
-    console.log("Opening comment modal for new comment");
-    document.getElementById('parent_id').value = '';  // Clear the parent_id for new top-level comments
-    $('#commentModal').modal('show');
-}
-
-function openReplyModal(parentId) {
-    console.log("Opening reply modal for parent ID: ", parentId);
+function openCommentModal(parentId = '') {
     document.getElementById('parent_id').value = parentId;
+    const errorDiv = document.querySelector('.alert-danger');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
     $('#commentModal').modal('show');
 }
 
@@ -80,4 +101,8 @@ function applyFilters() {
     query += `date_order=${sortOrder}`;
 
     window.location.href = query;
+}
+
+function closeCommentModal() {
+    $('#commentModal').modal('hide');
 }
