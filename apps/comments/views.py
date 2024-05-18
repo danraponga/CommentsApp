@@ -8,7 +8,7 @@ from apps.comments.forms import CommentForm
 
 class CommentListView(ListView):
     model = Comment
-    template_name = "comments/comments.html"
+    template_name = "comments/index.html"
     context_object_name = "comments"
     paginate_by = 25
 

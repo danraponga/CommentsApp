@@ -1,13 +1,14 @@
 const commentForm = document.getElementById('commentForm');
 const commentsDiv = document.getElementById('comments');
 const filterForm = document.getElementById('filterForm');
+const commentTemplate = Handlebars.compile(document.getElementById('comment-template').innerHTML);
+const replyTemplate = Handlebars.compile(document.getElementById('reply-template').innerHTML);
 
 function displayErrors(errors) {
     const previousErrorDiv = document.querySelector('.alert-danger');
     if (previousErrorDiv) {
         previousErrorDiv.remove();
     }
-
     let errorMessages = '';
     for (const field in errors) {
         if (errors.hasOwnProperty(field)) {
@@ -17,66 +18,72 @@ function displayErrors(errors) {
             });
         }
     }
-
     const errorDiv = document.createElement('div');
     errorDiv.classList.add('alert', 'alert-danger');
     errorDiv.innerHTML = errorMessages;
     document.querySelector('.modal-body').prepend(errorDiv);
 }
 
+function createCommentElement(comment, isReply = false) {
+    let template = isReply ? replyTemplate : commentTemplate;
+    let newComment = template({
+        id: comment.id,
+        username: comment.username,
+        email: comment.email,
+        created_at: new Date(comment.created_at).toLocaleString(),
+        text: comment.text,
+        image: comment.image || null,
+        file: comment.file || null
+    });
+    
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newComment;
+    return tempDiv.firstElementChild;
+}
+
 function displayComment(comment) {
-    const commentDiv = document.createElement('div');
-    commentDiv.classList.add('comment-box');
-    commentDiv.innerHTML = `
-        <div class="info">
-            <strong>${comment.username}</strong> (<a href="mailto:${comment.email}">${comment.email}</a>)
-            <small class="text-muted">${new Date(comment.created_at).toLocaleString()}</small>
-        </div>
-        <div class="content">${comment.text}</div>
-        ${comment.image ? `<div class="image mt-2"><img src="${comment.image}" alt="Image" class="img-fluid"></div>` : ''}
-        ${comment.file ? `<div class="file mt-2"><a href="${comment.file}" download>Download File</a></div>` : ''}
-        <div class="actions">
-            <button onclick="openCommentModal('${comment.id}')">Reply</button>
-            <div id="replies-${comment.id}" class="replies"></div>
-        </div>
-    `;
+    const commentElement = createCommentElement(comment, Boolean(comment.parent));
     if (comment.parent) {
-        const parentDiv = document.getElementById('replies-' + comment.parent);
-        if (parentDiv) {
-            parentDiv.prepend(commentDiv);
-            // Automatically show replies for the parent comment
-            showReplies(comment.parent);
-            let showRepliesButton = document.querySelector(`[onclick="toggleReplies('${comment.parent}')"]`);
-            if (!showRepliesButton && comment.parent) {
-                const parentCommentDiv = parentDiv.closest('.comment-box');
-                showRepliesButton = document.createElement('button');
-                showRepliesButton.className = 'btn btn-link';
-                showRepliesButton.setAttribute('onclick', `toggleReplies('${comment.parent}')`);
-                showRepliesButton.textContent = 'Show Replies';
-                parentCommentDiv.querySelector('.actions').appendChild(showRepliesButton);
+        const parentRepliesDiv = document.getElementById('replies-' + comment.parent);
+        if (parentRepliesDiv) {
+            parentRepliesDiv.appendChild(commentElement);  
+            const parentCommentDiv = document.getElementById('comment-' + comment.parent);
+            let showRepliesButton = parentCommentDiv.querySelector('.toggle-replies-btn');
+            if (showRepliesButton && showRepliesButton.style.display === 'none') {
+                showRepliesButton.style.display = 'inline-block';
+                showRepliesButton.textContent = 'Hide Replies';
             }
+            showReplies(comment.parent);
         } else {
-            commentsDiv.prepend(commentDiv);
+            commentsDiv.prepend(commentElement); 
         }
     } else {
-        commentsDiv.prepend(commentDiv);
+        commentsDiv.prepend(commentElement); 
     }
 }
 
-function toggleReplies(commentId) {
-    const repliesDiv = document.getElementById('replies-' + commentId);
+function toggleReplies(link, commentID) {
+    const repliesDiv = document.getElementById('replies-' + commentID);
     if (repliesDiv.style.display === 'none' || !repliesDiv.style.display) {
         repliesDiv.style.display = 'block';
+        link.innerHTML = '<i class="bi bi-chevron-double-up"> Hide Replies</i>';
     } else {
         repliesDiv.style.display = 'none';
+        link.innerHTML = '<i class="bi bi-chevron-double-down"> Show Replies</i>';
     }
 }
 
-function showReplies(commentId) {
-    const repliesDiv = document.getElementById('replies-' + commentId);
-    repliesDiv.style.display = 'block';
+function showReplies(commentID) {
+    const repliesDiv = document.getElementById('replies-' + commentID);
+    if (repliesDiv.style.display === 'none' || !repliesDiv.style.display) {
+        repliesDiv.style.display = 'block';
+        const parentCommentDiv = document.getElementById('comment-' + commentID);
+        const showRepliesButton = parentCommentDiv.querySelector('.toggle-replies-link');
+        if (showRepliesButton) {
+            showRepliesButton.innerHTML = '<i class="bi bi-chevron-double-up"> Hide Replies</i>';
+        }
+    }
 }
-
 function openCommentModal(parentId = '') {
     document.getElementById('parent_id').value = parentId;
     const errorDiv = document.querySelector('.alert-danger');

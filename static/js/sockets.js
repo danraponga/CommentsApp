@@ -7,6 +7,7 @@ ws.onmessage = function(event) {
     } else if (data.comment) {
         displayComment(data.comment);
         document.getElementById('commentForm').reset();
+        console.log("Recieved")
         closeCommentModal();
     }
 };

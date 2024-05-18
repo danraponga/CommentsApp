@@ -21,7 +21,6 @@ class CommentConsumer(AsyncWebsocketConsumer):
         form = CommentForm(json.loads(text_data))
         if not await sync_to_async(form.is_valid)():
             errors = json.loads(form.errors.as_json())
-            print(errors, type(errors))
             await self.send(text_data=json.dumps({"errors": errors}))
             return
 
@@ -33,7 +32,6 @@ class CommentConsumer(AsyncWebsocketConsumer):
             image = save_base64file(
                 path=IMAGES_DIR, base_str=image, username=data["username"]
             )
-            print(image)
 
         if file:
             file = save_base64file(
