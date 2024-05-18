@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Comments{% endblock %}
+
+{% block content %}
+<h1 class="mt-5">Comments</h1>
+<button class="btn btn-primary btn-lg mb-4" onclick="openCommentModal()">Add Comment</button>
+
+<!-- Filter Form -->
+<form id="filterForm" class="form-inline mb-4">
+    <input type="text" class="form-control mb-2 mr-sm-2" id="filterUsername" placeholder="Username">
+    <input type="email" class="form-control mb-2 mr-sm-2" id="filterEmail" placeholder="Email">
+    <select class="form-control mb-2 mr-sm-2" id="sortOrder">
+        <option value="desc">Newest First</option>
+        <option value="asc">Oldest First</option>
+    </select>
+    <button type="button" class="btn btn-primary mb-2" onclick="applyFilters()">Filter</button>
+</form>
+
+{% include 'comments/comment_form.html' %}
+{% include 'comments/comment_list.html' %}
+{% include 'comments/js_template.html' %}
+
+{% endblock %}

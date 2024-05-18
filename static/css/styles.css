@@ -39,28 +39,19 @@
     margin-top: 10px;
 }
 
-.comment-box .actions button {
-    margin-right: 5px;
-    padding: 5px 15px;
-    font-size: 1.2em;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
+.comment-box .actions .reply-link,
+.comment-box .actions .toggle-replies-link {
+    color: #007bff;
     cursor: pointer;
+    font-size: 1.2em;
+    margin-right: 10px;
+    text-decoration: none; 
 }
 
-.comment-box .actions button.btn-secondary {
-    background-color: #6c757d;
-}
-
-.comment-box .actions button:hover {
-    background-color: #0056b3;
-}
-
-.comment-box .actions button.btn-secondary:hover {
-    background-color: #5a6268;
+.comment-box .actions .reply-link:hover,
+.comment-box .actions .toggle-replies-link:hover {
+    color: #0056b3;
+    text-decoration: none; 
 }
 
 .reply-box {
@@ -69,17 +60,25 @@
     padding-left: 10px;
 }
 
-/* Styles for Tingle modal */
-.tingle-modal-box {
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    border-radius: 5px;
+#filterForm input,
+#filterForm select {
+    font-size: 1.2em;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+#filterForm .btn{
+    font-size: 1.2em;
+    padding: 5px 30px;
 }
 
-.tingle-modal-box .tingle-modal-close {
-    color: white;
-    font-size: 2rem;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+#commentForm .form-control,
+#commentForm .form-control-file {
+    font-size: 1.2em;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#commentForm button {
+    font-size: 1.2em;
+    padding: 5px 10px;
 }
