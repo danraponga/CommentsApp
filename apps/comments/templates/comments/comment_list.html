@@ -5,7 +5,7 @@
                 <strong>{{ comment.username }}</strong> (<a href="mailto:{{ comment.email }}">{{ comment.email }}</a>)
                 <small class="text-muted">{{ comment.created_at|date:"M d, Y, g:i a" }}</small>
             </div>
-            <div class="content">{{ comment.text }}</div>
+            <div class="content">{{ comment.text|safe }}</div>
             {% if comment.image %}
                 <div class="image mt-2">
                     <a href="{{ comment.image.url }}">
@@ -35,7 +35,7 @@
                             <strong>{{ reply.username }}</strong> (<a href="mailto:{{ reply.email }}">{{ reply.email }}</a>)
                             <small class="text-muted">{{ reply.created_at|date:"M d, Y, g:i a" }}</small>
                         </div>
-                        <div class="content">{{ reply.text }}</div>
+                        <div class="content">{{ reply.text|safe }}</div>
                         {% if reply.image %}
                             <div class="image mt-2">
                                 <a href="{{ reply.image.url }}" data-lightbox="reply-{{ reply.id }}">

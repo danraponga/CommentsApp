@@ -1,12 +1,14 @@
 from django.forms import IntegerField, ModelForm, ValidationError, Textarea
 
 from apps.comments.models import Comment
-from apps.comments.utils import resize_image_if_needed, decode_base64
+from apps.comments.utils import TagValidator, resize_image_if_needed, decode_base64
 from config.settings import (
     MAX_IMAGE_SIZE,
     VALID_FILE_EXTENSIONS,
     VALID_IMAGE_EXTENSIONS,
     MAX_FILE_SIZE,
+    ALLOWED_TAGS,
+    ALLOWED_TAG_ATTRIBUTES
 )
 
 
@@ -15,18 +17,21 @@ class CommentForm(ModelForm):
 
     class Meta:
         model = Comment
-        fields = [
-            "parent_id",
-            "username",
-            "email",
-            "homepage",
-            "text",
-            "image",
-            "file",
-        ]
+        fields = ["parent_id", "username", "email", "homepage","text", "image","file"]
         widgets = {
             "text": Textarea(attrs={"placeholder": "Comment"}),
         }
+
+    def clean_text(self):
+        text = self.data.get("text")
+        parser = TagValidator(ALLOWED_TAGS, ALLOWED_TAG_ATTRIBUTES)
+        try:
+            parser.feed(text)
+            if parser.stack:
+                raise ValidationError(f"Unclosed tag: {parser.stack[0]}")
+        except TypeError as e:
+            raise ValidationError(str(e))
+        return text
 
     def clean_image(self):
         base_image = self.data.get("image", None)
