@@ -14,7 +14,7 @@ function displayErrors(errors) {
         if (errors.hasOwnProperty(field)) {
             const messagesArray = errors[field];
             messagesArray.forEach(messageObj => {
-                errorMessages += `<p>${field}: ${messageObj.message}</p>`;
+                errorMessages += `<p>${messageObj.message}</p>`;
             });
         }
     }

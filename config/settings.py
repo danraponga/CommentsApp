@@ -32,6 +32,9 @@ VALID_FILE_EXTENSIONS = ("txt", "plain")
 MAX_IMAGE_SIZE = (320, 240) # (width, height)
 MAX_FILE_SIZE = 100 * 1024  # 100KB
 
+ALLOWED_TAGS = ("a", "code", "i", "strong")
+ALLOWED_TAG_ATTRIBUTES = {"a": ["href", "title"]}
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
