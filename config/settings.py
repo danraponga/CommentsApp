@@ -26,6 +26,15 @@ MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
 IMAGES_DIR = os.getenv('IMAGES_DIR', MEDIA_ROOT / "images")
 FILES_DIR = os.getenv('FILES_DIR', MEDIA_ROOT / "files")
 
+VALID_IMAGE_EXTENSIONS = ("jpg", "png", "gif")
+VALID_FILE_EXTENSIONS = ("txt", "plain")
+
+MAX_IMAGE_SIZE = (320, 240) # (width, height)
+MAX_FILE_SIZE = 100 * 1024  # 100KB
+
+ALLOWED_TAGS = ("a", "code", "i", "strong")
+ALLOWED_TAG_ATTRIBUTES = {"a": ["href", "title"]}
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -42,12 +51,15 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
+    
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "apps.comments",
 ]
 
@@ -80,6 +92,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
 
 
 # Database
@@ -135,6 +158,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.getenv("STATIC_ROOT", BASE_DIR / "static")
+
+STATICFILES_DIRS = [
+    os.getenv("STATICFILES_DIR_1", BASE_DIR / "staticfiles"),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

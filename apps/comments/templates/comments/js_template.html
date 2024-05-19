@@ -1,0 +1,60 @@
+{% verbatim %}
+<script id="comment-template" type="text/x-handlebars-template">
+    <div class="comment-box" id="comment-{{id}}">
+        <div class="info">
+            <strong>{{username}}</strong> (<a href="mailto:{{email}}">{{email}}</a>)
+            <small class="text-muted">{{created_at}}</small>
+        </div>
+        <div class="content">{{{text}}}</div>
+        {{#if image}}
+            <div class="image mt-2">
+                <a href="{{image}}" class="modal-image">
+                    <img src="{{image}}" alt="Image" class="img-fluid" data-src="{{image}}">
+                </a>
+            </div>
+        {{/if}}
+        {{#if file}}
+            <div class="file mt-2">
+                <a href="{{file}}" download>Download File</a>
+            </div>
+        {{/if}}
+        <div class="actions">
+            <span class="reply-link" onclick="openCommentModal('{{id}}')">
+                <i class="bi bi-reply-all"> Reply</i>
+            </span>
+            <span class="toggle-replies-link" style="display: none;" onclick="toggleReplies(this, '{{id}}')">
+                <i class="bi bi-chevron-double-down">Show Replies</i>
+            </span>
+        </div>
+        <div id="replies-{{id}}" class="replies" style="display: none;"></div>
+    </div>
+</script>
+
+<script id="reply-template" type="text/x-handlebars-template">
+    <div class="comment-box reply-box" id="comment-{{id}}">
+        <div class="info">
+            <strong>{{username}}</strong> (<a href="mailto:{{email}}">{{email}}</a>)
+            <small class="text-muted">{{created_at}}</small>
+        </div>
+        <div class="content">{{{text}}}</div>
+        {{#if image}}
+            <div class="image mt-2">
+                <a href="{{image}}" class="modal-image">
+                    <img src="{{image}}" alt="Image" class="img-fluid" data-src="{{image}}">
+                </a>
+            </div>
+        {{/if}}
+        {{#if file}}
+            <div class="file mt-2">
+                <a href="{{file}}" download>Download File</a>
+            </div>
+        {{/if}}
+        <div class="actions">
+            <span class="reply-link" onclick="openCommentModal('{{id}}')">
+                <i class="bi bi-reply-all"> Reply</i>
+            </span>
+        </div>
+        <div id="replies-{{id}}" class="replies" style="display: none;"></div>
+    </div>
+</script>
+{% endverbatim %}
